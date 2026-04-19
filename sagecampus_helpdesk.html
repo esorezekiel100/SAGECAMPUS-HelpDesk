@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAGECAMPUS HelpDesk</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06080f;--bg2:#0b0f1c;--surf:#0f1629;--surf2:#141e36;--surf3:#1a2640;
+  --acc:#6366f1;--acc2:#4f46e5;--teal:#14b8a6;--em:#a78bfa;
+  --grn:#10b981;--amb:#f59e0b;--red:#ef4444;--pink:#ec4899;
+  --tx:#e2e8f0;--tx2:#94a3b8;--tx3:#475569;
+  --bdr:rgba(255,255,255,0.07);--bdr2:rgba(99,102,241,0.35);
+  --glow:rgba(99,102,241,0.18);
+  --r:10px;--rl:16px;--fnt:'Sora',sans-serif;--mono:'DM Mono',monospace;
+}
+html,body{height:100%;overflow:hidden;font-family:var(--fnt);color:var(--tx);background:var(--bg);font-size:15px}
+button,input,select,textarea{font-family:var(--fnt)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--surf3);border-radius:4px}
+
+.scr{display:none;height:100vh}
+.scr.on{display:flex}
+
+/* ── AUTH ── */
+.auth-wrap{display:flex;width:100%;height:100%}
+.auth-left{
+  width:42%;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:3rem;position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#04060e 0%,#0c1230 50%,#060910 100%);
+}
+.auth-left::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 55% 50% at 25% 55%,rgba(99,102,241,.2) 0%,transparent 70%),
+             radial-gradient(ellipse 40% 35% at 80% 18%,rgba(167,139,250,.14) 0%,transparent 60%),
+             radial-gradient(ellipse 30% 30% at 50% 85%,rgba(20,184,166,.08) 0%,transparent 60%)}
+.auth-ring{position:absolute;border-radius:50%;border:1px solid rgba(99,102,241,.07);animation:ringpulse 6s ease-in-out infinite}
+.auth-ring:nth-child(1){width:320px;height:320px;top:-90px;right:-90px}
+.auth-ring:nth-child(2){width:520px;height:520px;bottom:-220px;left:-220px;animation-delay:2s}
+.auth-ring:nth-child(3){width:200px;height:200px;top:38%;right:6%;animation-delay:4s}
+@keyframes ringpulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.05);opacity:1}}
+.al-inner{position:relative;z-index:2;text-align:center;max-width:340px}
+.logo-box{width:70px;height:70px;border-radius:20px;margin:0 auto 1.2rem;
+  background:linear-gradient(135deg,var(--acc),var(--em));
+  display:flex;align-items:center;justify-content:center;font-size:2rem;
+  box-shadow:0 0 36px rgba(99,102,241,.4)}
+.logo-name{font-size:1.75rem;font-weight:800;letter-spacing:-1px}
+.logo-name span{color:var(--acc)}
+.logo-tag{font-size:.68rem;color:var(--tx3);letter-spacing:.18em;text-transform:uppercase;margin-top:4px;margin-bottom:2rem}
+.fpill{display:flex;align-items:center;gap:.65rem;background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:40px;padding:.5rem .95rem;margin-bottom:.65rem;font-size:.77rem;color:var(--tx2);animation:fadeup .5s both}
+@keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fpill:nth-child(1){animation-delay:.1s}.fpill:nth-child(2){animation-delay:.2s}.fpill:nth-child(3){animation-delay:.3s}.fpill:nth-child(4){animation-delay:.4s}
+.fpill-ic{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.db-status{display:flex;align-items:center;gap:.5rem;margin-top:1.5rem;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:40px;padding:.45rem 1rem;font-size:.72rem;color:#34d399;width:fit-content;margin-left:auto;margin-right:auto}
+.db-dot{width:6px;height:6px;background:var(--grn);border-radius:50%;animation:pls 2s infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
+
+.auth-right{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--bg)}
+.auth-card{width:100%;max-width:430px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rl);padding:2.5rem;animation:fadeup .4s both}
+.ac-title{font-size:1.4rem;font-weight:700;margin-bottom:.3rem}
+.ac-sub{font-size:.8rem;color:var(--tx2);margin-bottom:1.65rem}
+.fg{margin-bottom:1rem}
+.fl{display:block;font-size:.68rem;color:var(--tx2);font-weight:500;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.fi{width:100%;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:.72rem .95rem;color:var(--tx);font-size:.88rem;outline:none;transition:.15s}
+.fi:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--glow)}
+.fi::placeholder{color:var(--tx3)}
+.fsel{width:100%;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:.72rem .95rem;color:var(--tx);font-size:.88rem;outline:none;cursor:pointer;appearance:none}
+.fsel:focus{border-color:var(--acc)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.btn-main{width:100%;background:var(--acc);color:#fff;border:none;border-radius:var(--r);padding:.82rem;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:.4rem;transition:.15s;letter-spacing:.02em}
+.btn-main:hover{background:var(--acc2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,.35)}
+.btn-main:active{transform:translateY(0)}
+.aswitch{text-align:center;margin-top:1.1rem;font-size:.8rem;color:var(--tx2)}
+.aswitch a{color:var(--acc);cursor:pointer;font-weight:600}
+.aswitch a:hover{text-decoration:underline}
+.field-err{border-color:var(--red) !important;box-shadow:0 0 0 3px rgba(239,68,68,.15) !important}
+.err-msg{font-size:.7rem;color:var(--red);margin-top:4px;display:none}
+.err-msg.on{display:block}
+.strength-bar{height:3px;border-radius:3px;margin-top:6px;background:var(--surf3);overflow:hidden}
+.strength-fill{height:100%;border-radius:3px;width:0%;transition:width .3s,background .3s}
+.demo-hint{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--bdr);font-size:.7rem;color:var(--tx3);text-align:center}
+
+/* ── MAIN APP ── */
+#scr-app{flex-direction:row;position:relative}
+.sidebar{width:244px;min-width:244px;height:100vh;background:var(--surf);border-right:1px solid var(--bdr);display:flex;flex-direction:column;flex-shrink:0}
+.sb-top{padding:1.25rem 1rem .9rem;border-bottom:1px solid var(--bdr)}
+.sb-brand{display:flex;align-items:center;gap:.7rem}
+.sb-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--acc),var(--em));display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.sb-txt{font-size:.92rem;font-weight:700;letter-spacing:-.3px;line-height:1.15}
+.sb-txt small{display:block;font-size:.59rem;color:var(--tx3);font-weight:400;text-transform:uppercase;letter-spacing:.1em}
+.sb-nav{flex:1;overflow-y:auto;padding:.8rem .65rem}
+.sg-lbl{font-size:.6rem;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.12em;padding:0 .45rem;margin-bottom:.38rem;margin-top:.9rem}
+.sg-lbl:first-child{margin-top:0}
+.nl{display:flex;align-items:center;gap:.65rem;padding:.58rem .72rem;border-radius:var(--r);cursor:pointer;color:var(--tx2);font-size:.82rem;transition:.13s;position:relative;user-select:none;margin-bottom:2px}
+.nl:hover{background:rgba(255,255,255,.05);color:var(--tx)}
+.nl.on{background:rgba(99,102,241,.14);color:var(--acc);font-weight:500}
+.nl.on::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:55%;background:var(--acc);border-radius:0 3px 3px 0}
+.ni{font-size:.95rem;width:20px;text-align:center;flex-shrink:0}
+.nbadge{margin-left:auto;background:var(--red);color:#fff;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:20px}
+.nbadge.g{background:var(--grn)}
+.sb-foot{border-top:1px solid var(--bdr);padding:.9rem 1rem;display:flex;align-items:center;gap:.65rem}
+.uav{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--acc),var(--pink));display:flex;align-items:center;justify-content:center;font-size:.77rem;font-weight:700}
+.uname{font-size:.82rem;font-weight:500}
+.urole{font-size:.67rem;color:var(--tx3)}
+.ubtn{margin-left:auto;background:none;border:1px solid var(--bdr);border-radius:7px;color:var(--tx3);cursor:pointer;padding:4px 8px;font-size:.7rem;transition:.13s}
+.ubtn:hover{border-color:var(--red);color:var(--red)}
+
+/* ── CONTENT ── */
+.mcontent{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.tbar{height:58px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 1.8rem;gap:.75rem;flex-shrink:0;background:var(--bg)}
+.tbar-title{font-size:1.07rem;font-weight:700}
+.tbar-sub{font-size:.73rem;color:var(--tx3);margin-left:.4rem}
+.tbar-acts{margin-left:auto;display:flex;gap:.6rem;align-items:center}
+.btn{cursor:pointer;border-radius:var(--r);font-size:.78rem;font-weight:500;padding:.44rem 1.05rem;transition:.13s;border:1px solid var(--bdr)}
+.btn-g{background:transparent;color:var(--tx2)}
+.btn-g:hover{background:var(--surf2);color:var(--tx)}
+.btn-p{background:var(--acc);color:#fff;border-color:var(--acc)}
+.btn-p:hover{background:var(--acc2);box-shadow:0 4px 14px rgba(99,102,241,.3)}
+.pg{display:none;flex:1;overflow:hidden}
+.pg.on{display:flex;flex-direction:column}
+#pg-chat.on{flex-direction:row}
+.pbody{flex:1;overflow-y:auto;padding:1.6rem 1.8rem}
+
+/* ── DASHBOARD ── */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.25rem}
+.sbox{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:1.15rem 1.2rem;position:relative;overflow:hidden;transition:.15s}
+.sbox:hover{transform:translateY(-2px)}
+.sbox::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:0 0 var(--r) var(--r)}
+.sbox.ind::after{background:var(--acc)}.sbox.gn::after{background:var(--grn)}.sbox.am::after{background:var(--amb)}.sbox.tl::after{background:var(--teal)}
+.slbl{font-size:.68rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+.snum{font-size:1.9rem;font-weight:700;font-family:var(--mono);line-height:1}
+.sdelta{font-size:.7rem;margin-top:5px;color:var(--grn)}
+.sico{position:absolute;right:.9rem;top:50%;transform:translateY(-50%);font-size:2.2rem;opacity:.07}
+.dgrid{display:grid;grid-template-columns:3fr 2fr;gap:1.1rem}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:1.2rem}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem}
+.cht{font-size:.7rem;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em}
+.chl{font-size:.73rem;color:var(--acc);cursor:pointer}.chl:hover{text-decoration:underline}
+.tr{display:flex;align-items:center;gap:.75rem;padding:.62rem .5rem;border-radius:8px;cursor:pointer;transition:.12s;border-bottom:1px solid var(--bdr)}
+.tr:last-child{border-bottom:none}.tr:hover{background:rgba(255,255,255,.03)}
+.tid{font-family:var(--mono);font-size:.7rem;color:var(--tx3);width:48px;flex-shrink:0}
+.ti{flex:1;min-width:0}
+.tt{font-size:.83rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm{font-size:.7rem;color:var(--tx3);margin-top:2px}
+.ait{display:flex;gap:.65rem;padding:.6rem 0;border-bottom:1px solid var(--bdr)}
+.ait:last-child{border-bottom:none}
+.ad{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.am2{font-size:.8rem;color:var(--tx2);line-height:1.5}
+.at{font-size:.68rem;color:var(--tx3);margin-top:2px}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;font-size:.63rem;font-weight:700;padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+.b-op{background:rgba(99,102,241,.15);color:#a5b4fc}
+.b-pn{background:rgba(245,158,11,.15);color:#fbbf24}
+.b-rs{background:rgba(16,185,129,.15);color:#34d399}
+.b-ur{background:rgba(239,68,68,.15);color:#f87171}
+.b-in{background:rgba(20,184,166,.15);color:#2dd4bf}
+
+/* ── TICKETS ── */
+.fbar{display:flex;gap:.5rem;margin-bottom:1.15rem;flex-wrap:wrap}
+.chip{padding:.34rem .92rem;border-radius:20px;font-size:.75rem;cursor:pointer;border:1px solid var(--bdr);background:var(--surf2);color:var(--tx2);transition:.13s;user-select:none}
+.chip.on{background:rgba(99,102,241,.15);border-color:var(--acc);color:var(--acc)}
+.chip:hover:not(.on){color:var(--tx)}
+.ntp{background:var(--surf);border:1px solid var(--bdr2);border-radius:var(--rl);padding:1.35rem;margin-bottom:1.25rem;display:none;animation:fadeup .25s both}
+.ntp.op{display:block}
+.ntp-t{font-size:.9rem;font-weight:600;margin-bottom:1.05rem}
+.ntp-acts{display:flex;gap:.65rem;margin-top:.9rem}
+.ttbl{width:100%;border-collapse:collapse}
+.ttbl th{text-align:left;padding:.65rem .92rem;font-size:.67rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--bdr)}
+.ttbl td{padding:.82rem .92rem;border-bottom:1px solid var(--bdr);font-size:.83rem;vertical-align:middle}
+.ttbl tr:hover td{background:rgba(255,255,255,.02)}
+.ttbl tr:last-child td{border-bottom:none}
+.pd{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px}
+.ph{background:var(--red)}.pm{background:var(--amb)}.pl{background:var(--grn)}
+
+/* ── CHAT ── */
+#pg-chat{overflow:hidden}
+.csp{width:256px;flex-shrink:0;border-right:1px solid var(--bdr);display:flex;flex-direction:column;background:var(--surf)}
+.csp-h{padding:.9rem;border-bottom:1px solid var(--bdr)}
+.csrch{width:100%;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:.56rem .88rem;color:var(--tx);font-size:.8rem;outline:none;transition:.13s}
+.csrch:focus{border-color:var(--acc)}
+.clist{flex:1;overflow-y:auto}
+.ci{display:flex;align-items:center;gap:.65rem;padding:.8rem .9rem;cursor:pointer;border-bottom:1px solid var(--bdr);transition:.12s;position:relative}
+.ci:hover,.ci.on{background:rgba(99,102,241,.08)}
+.ci.on{border-left:3px solid var(--acc)}
+.ciav{width:39px;height:39px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+.cin{font-size:.82rem;font-weight:500}
+.cip{font-size:.7rem;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.cit{position:absolute;right:.9rem;top:.8rem;font-size:.65rem;color:var(--tx3)}
+.ciu{position:absolute;right:.9rem;bottom:.8rem;background:var(--acc);color:#fff;font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:10px}
+.cma{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.ctbar{padding:.8rem 1.35rem;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:.78rem;background:var(--bg);flex-shrink:0}
+.aipill{margin-left:auto;display:flex;align-items:center;gap:.45rem;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);border-radius:20px;padding:4px 13px;font-size:.7rem;color:#34d399}
+.aipulse{width:6px;height:6px;background:var(--grn);border-radius:50%;animation:pls 1.8s infinite}
+.msgs{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:.92rem}
+.msg{display:flex;gap:.65rem;max-width:80%}
+.msg.u{align-self:flex-end;flex-direction:row-reverse}
+.mav{width:33px;height:33px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.87rem}
+.mav.b{background:linear-gradient(135deg,var(--acc),var(--teal))}
+.mav.u2{background:linear-gradient(135deg,var(--em),var(--pink))}
+.mbub{padding:.75rem .95rem;border-radius:14px;font-size:.84rem;line-height:1.65}
+.msg.b .mbub{background:var(--surf2);border:1px solid var(--bdr);border-top-left-radius:3px}
+.msg.u .mbub{background:var(--acc);border-top-right-radius:3px}
+.mts{font-size:.65rem;color:var(--tx3);margin-top:4px}
+.msg.u .mts{text-align:right}
+.tybub{display:flex;align-items:center;gap:5px;padding:.52rem .78rem}
+.tyd{width:6px;height:6px;background:var(--tx3);border-radius:50%;animation:tyb 1.3s ease-in-out infinite}
+.tyd:nth-child(2){animation-delay:.2s}.tyd:nth-child(3){animation-delay:.4s}
+@keyframes tyb{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.ciw{border-top:1px solid var(--bdr);padding:.9rem 1.35rem;background:var(--surf);flex-shrink:0}
+.qcs{display:flex;gap:.45rem;margin-bottom:.65rem;flex-wrap:wrap}
+.qc{font-size:.7rem;padding:4px 12px;border-radius:20px;border:1px solid var(--bdr);background:var(--surf2);color:var(--tx2);cursor:pointer;transition:.12s;white-space:nowrap}
+.qc:hover{border-color:var(--acc);color:var(--acc)}
+.cirow{display:flex;gap:.65rem;align-items:flex-end}
+.cta{flex:1;background:var(--bg2);border:1px solid var(--bdr);border-radius:11px;padding:.73rem .92rem;color:var(--tx);font-size:.85rem;outline:none;resize:none;min-height:44px;max-height:115px;line-height:1.5;transition:.13s}
+.cta:focus{border-color:var(--acc)}
+.sbtn{width:44px;height:44px;border-radius:11px;background:var(--acc);border:none;cursor:pointer;color:#fff;font-size:1.05rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.13s}
+.sbtn:hover{background:var(--acc2);transform:scale(1.05);box-shadow:0 4px 18px rgba(99,102,241,.35)}
+.sbtn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ── KB ── */
+.kbsb{position:relative;margin-bottom:1.5rem}
+.kbsb input{width:100%;padding:.82rem .92rem .82rem 2.8rem;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rl);color:var(--tx);font-size:.88rem;outline:none;transition:.13s}
+.kbsb input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--glow)}
+.kbsi{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);opacity:.4;font-size:1rem}
+.kbgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.92rem}
+.kbc{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.35rem;cursor:pointer;transition:.15s}
+.kbc:hover{border-color:var(--acc);transform:translateY(-3px);box-shadow:0 10px 35px rgba(0,0,0,.25)}
+.kbe{font-size:2rem;margin-bottom:.78rem}
+.kbt{font-size:.93rem;font-weight:600;margin-bottom:.35rem}
+.kbd{font-size:.78rem;color:var(--tx2);line-height:1.6;margin-bottom:.78rem}
+.kbcnt{font-size:.7rem;color:var(--tx3);display:flex;align-items:center;gap:5px}
+.kbcnt::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--acc);flex-shrink:0}
+
+/* ── ANNOUNCEMENTS ── */
+.annl{display:flex;flex-direction:column;gap:.95rem}
+.annc{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:1.2rem 1.4rem;transition:.13s}
+.annc:hover{border-color:var(--bdr2)}
+.annh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.5rem}
+.annt{font-size:.93rem;font-weight:600}
+.annb{font-size:.81rem;color:var(--tx2);line-height:1.7}
+.annf{font-size:.69rem;color:var(--tx3);margin-top:.65rem}
+
+/* ── PROFILE ── */
+.pgl{display:grid;grid-template-columns:292px 1fr;gap:1.2rem}
+.pc{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.6rem;text-align:center}
+.pav{width:76px;height:76px;border-radius:50%;margin:0 auto .9rem;background:linear-gradient(135deg,var(--acc),var(--pink));display:flex;align-items:center;justify-content:center;font-size:1.75rem;font-weight:700;box-shadow:0 0 28px rgba(99,102,241,.22)}
+.pn{font-size:1.15rem;font-weight:700;margin-bottom:2px}
+.pr{font-size:.75rem;color:var(--tx2);margin-bottom:1.3rem}
+.psg{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bdr);border-radius:var(--r);overflow:hidden;margin-bottom:1.1rem}
+.ps{background:var(--surf2);padding:.72rem .4rem;text-align:center}
+.psv{font-size:1.2rem;font-weight:700;font-family:var(--mono)}
+.psl{font-size:.62rem;color:var(--tx3)}
+.btn-o{padding:.52rem 1.1rem;border-radius:8px;border:1px solid var(--bdr);background:transparent;color:var(--tx2);font-size:.8rem;cursor:pointer;width:100%;transition:.13s}
+.btn-o:hover{border-color:var(--acc);color:var(--acc)}
+.sc{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.4rem;margin-bottom:.92rem}
+.sct{font-size:.73rem;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.85rem;padding-bottom:.65rem;border-bottom:1px solid var(--bdr)}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--bdr)}
+.sr:last-child{border-bottom:none;padding-bottom:0}
+.sl{font-size:.83rem}
+.ss{font-size:.7rem;color:var(--tx3);margin-top:2px}
+.tgl{width:41px;height:23px;background:var(--surf3);border-radius:12px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.tgl.on{background:var(--acc)}
+.tgl::after{content:'';position:absolute;width:17px;height:17px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.tgl.on::after{left:21px}
+
+/* ── DATABASE ADMIN ── */
+.db-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.25rem}
+.db-stat{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:.95rem 1.1rem}
+.db-stat-n{font-size:1.65rem;font-weight:700;font-family:var(--mono);color:var(--acc)}
+.db-stat-l{font-size:.68rem;color:var(--tx3);margin-top:3px}
+.db-panel{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden}
+.db-panel-head{display:flex;align-items:center;justify-content:space-between;padding:.88rem 1.1rem;border-bottom:1px solid var(--bdr);background:var(--surf2)}
+.db-panel-title{font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:.5rem}
+.db-count{font-size:.68rem;color:var(--tx3);font-family:var(--mono)}
+.live-badge{font-size:.58rem;color:var(--grn);background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:20px;padding:2px 8px;margin-left:.4rem}
+.db-tbl{width:100%;border-collapse:collapse}
+.db-tbl th{text-align:left;padding:.62rem 1.05rem;font-size:.65rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--bdr)}
+.db-tbl td{padding:.74rem 1.05rem;border-bottom:1px solid var(--bdr);font-size:.81rem;vertical-align:middle}
+.db-tbl tr:last-child td{border-bottom:none}
+.db-tbl tr:hover td{background:rgba(255,255,255,.02)}
+.db-del{background:none;border:1px solid rgba(239,68,68,.3);border-radius:6px;color:var(--red);cursor:pointer;padding:3px 8px;font-size:.68rem;transition:.13s}
+.db-del:hover{background:rgba(239,68,68,.1)}
+.db-del:disabled{opacity:.3;cursor:not-allowed}
+.role-pill{display:inline-flex;font-size:.62rem;font-weight:600;padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+.rp-student{background:rgba(99,102,241,.15);color:#a5b4fc}
+.rp-faculty{background:rgba(20,184,166,.15);color:#2dd4bf}
+.rp-staff{background:rgba(245,158,11,.15);color:#fbbf24}
+.rp-admin{background:rgba(239,68,68,.15);color:#f87171}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.75rem;right:1.75rem;z-index:9999;background:var(--surf);border:1px solid var(--grn);border-radius:11px;padding:.72rem 1.25rem;display:flex;align-items:center;gap:.55rem;font-size:.83rem;color:var(--grn);opacity:0;transform:translateY(14px);transition:all .3s;pointer-events:none}
+.toast.on{opacity:1;transform:translateY(0)}
+.toast.err{border-color:var(--red);color:var(--red)}
+
+/* ── MODAL ── */
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:5000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.moverlay.on{opacity:1;pointer-events:auto}
+.modal{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.8rem;width:490px;max-width:95vw;transform:scale(.95);transition:transform .2s;max-height:90vh;overflow-y:auto}
+.moverlay.on .modal{transform:scale(1)}
+.mt{font-size:1rem;font-weight:700;margin-bottom:1.05rem;display:flex;justify-content:space-between;align-items:center}
+.mc{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:1.15rem;transition:.13s}.mc:hover{color:var(--tx)}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN ═══════════ -->
+<div class="scr on" id="scr-login">
+  <div class="auth-wrap">
+    <div class="auth-left">
+      <div class="auth-ring"></div>
+      <div class="auth-ring"></div>
+      <div class="auth-ring"></div>
+      <div class="al-inner">
+        <div class="logo-box">🎓</div>
+        <div class="logo-name">SAGE<span>CAMPUS</span></div>
+        <div class="logo-tag">Intelligent Helpdesk Platform</div>
+        <div class="fpill"><div class="fpill-ic" style="background:rgba(99,102,241,.2)">🤖</div>AI-powered 24/7 campus support</div>
+        <div class="fpill"><div class="fpill-ic" style="background:rgba(16,185,129,.2)">🎫</div>Smart ticket tracking & resolution</div>
+        <div class="fpill"><div class="fpill-ic" style="background:rgba(245,158,11,.2)">📚</div>Instant knowledge base access</div>
+        <div class="fpill"><div class="fpill-ic" style="background:rgba(20,184,166,.2)">🔒</div>Secure user database & auth</div>
+        <div class="db-status"><div class="db-dot"></div>User database online</div>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-card">
+        <div class="ac-title">Welcome back 👋</div>
+        <div class="ac-sub">Sign in to your SageCampus account</div>
+        <div class="fg">
+          <label class="fl">Email Address</label>
+          <input class="fi" id="le" type="email" placeholder="you@sagecampus.edu">
+          <div class="err-msg" id="le-err">Please enter a valid email address</div>
+        </div>
+        <div class="fg">
+          <label class="fl">Password</label>
+          <input class="fi" id="lp" type="password" placeholder="Your password">
+          <div class="err-msg" id="lp-err">Password is required</div>
+        </div>
+        <div style="text-align:right;margin-bottom:.5rem"><a style="font-size:.75rem;color:var(--acc);cursor:pointer">Forgot password?</a></div>
+        <button class="btn-main" onclick="doLogin()">Sign In →</button>
+        <div class="aswitch" style="margin-top:1rem">No account? <a onclick="goscr('scr-signup')">Create one</a></div>
+        <div class="demo-hint">
+          Demo admin: <span style="color:var(--acc);cursor:pointer;font-weight:500" onclick="document.getElementById('le').value='admin@sagecampus.edu';document.getElementById('lp').value='admin123'">admin@sagecampus.edu</span> / admin123
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SIGN UP ═══════════ -->
+<div class="scr" id="scr-signup">
+  <div class="auth-wrap">
+    <div class="auth-left">
+      <div class="auth-ring"></div>
+      <div class="auth-ring"></div>
+      <div class="auth-ring"></div>
+      <div class="al-inner">
+        <div class="logo-box">🎓</div>
+        <div class="logo-name">SAGE<span>CAMPUS</span></div>
+        <div class="logo-tag">Create your account</div>
+        <div class="fpill"><div class="fpill-ic" style="background:rgba(99,102,241,.2)">✅</div>Free for all students & staff</div>
+        <div class="fpill"><div class="fpill-ic" style="background:rgba(16,185,129,.2)">🔒</div>Passwords hashed & secured</div>
+        <div class="fpill"><div class="fpill-ic" style="background:rgba(245,158,11,.2)">⚡</div>Instant AI assistance 24/7</div>
+        <div class="fpill"><div class="fpill-ic" style="background:rgba(20,184,166,.2)">💾</div>Data persisted in local database</div>
+        <div class="db-status"><div class="db-dot"></div>Database ready to register</div>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-card">
+        <div class="ac-title">Create Account 🎓</div>
+        <div class="ac-sub">Join the SageCampus helpdesk platform</div>
+        <div class="frow">
+          <div class="fg"><label class="fl">First Name</label><input class="fi" id="sfn" placeholder="John"><div class="err-msg" id="sfn-err">Required</div></div>
+          <div class="fg"><label class="fl">Last Name</label><input class="fi" id="sln" placeholder="Doe"><div class="err-msg" id="sln-err">Required</div></div>
+        </div>
+        <div class="fg"><label class="fl">Email Address</label><input class="fi" id="sem" type="email" placeholder="you@sagecampus.edu"><div class="err-msg" id="sem-err">Enter a valid email</div></div>
+        <div class="frow">
+          <div class="fg"><label class="fl">Role</label><select class="fsel" id="srl"><option>Student</option><option>Faculty</option><option>Staff</option><option>Admin</option></select></div>
+          <div class="fg"><label class="fl">Department</label><select class="fsel" id="sdept"><option>Computer Science</option><option>Engineering</option><option>Business</option><option>Medicine</option><option>Arts</option><option>Law</option><option>Sciences</option></select></div>
+        </div>
+        <div class="fg">
+          <label class="fl">Password</label>
+          <input class="fi" id="spw" type="password" placeholder="Min. 6 characters" oninput="pwStrength(this.value)">
+          <div class="strength-bar"><div class="strength-fill" id="sfill"></div></div>
+          <div class="err-msg" id="spw-err">Password must be at least 6 characters</div>
+        </div>
+        <button class="btn-main" onclick="doSignup()">Create Account →</button>
+        <div class="aswitch" style="margin-top:1rem">Have an account? <a onclick="goscr('scr-login')">Sign in</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN APP ═══════════ -->
+<div class="scr" id="scr-app">
+  <div class="sidebar">
+    <div class="sb-top">
+      <div class="sb-brand">
+        <div class="sb-icon">🎓</div>
+        <div class="sb-txt">SAGECAMPUS <small>HelpDesk</small></div>
+      </div>
+    </div>
+    <div class="sb-nav">
+      <div class="sg-lbl">Main</div>
+      <div class="nl on" data-pg="dashboard" onclick="nav(this)"><span class="ni">📊</span>Dashboard</div>
+      <div class="nl" data-pg="tickets" onclick="nav(this)"><span class="ni">🎫</span>My Tickets<span class="nbadge" id="nbt">3</span></div>
+      <div class="nl" data-pg="chat" onclick="nav(this)"><span class="ni">💬</span>AI Support Chat</div>
+      <div class="sg-lbl">Resources</div>
+      <div class="nl" data-pg="knowledge" onclick="nav(this)"><span class="ni">📚</span>Knowledge Base</div>
+      <div class="nl" data-pg="announcements" onclick="nav(this)"><span class="ni">📢</span>Announcements<span class="nbadge g">4</span></div>
+      <div class="sg-lbl">Account</div>
+      <div class="nl" data-pg="profile" onclick="nav(this)"><span class="ni">👤</span>Profile & Settings</div>
+      <div class="nl" data-pg="database" onclick="nav(this)" id="db-nav" style="display:none"><span class="ni">🗄️</span>User Database</div>
+    </div>
+    <div class="sb-foot">
+      <div class="uav" id="sb-av">?</div>
+      <div><div class="uname" id="sb-nm">Not signed in</div><div class="urole" id="sb-rl">Guest</div></div>
+      <button class="ubtn" onclick="doLogout()">↩ Out</button>
+    </div>
+  </div>
+
+  <div class="mcontent">
+    <div class="tbar">
+      <div><span class="tbar-title" id="tb-t">Dashboard</span><span class="tbar-sub" id="tb-s"></span></div>
+      <div class="tbar-acts" id="tb-a"><button class="btn btn-p" onclick="nav(document.querySelector('[data-pg=tickets]'));openNTP()">+ New Ticket</button></div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="pg on" id="pg-dashboard">
+      <div class="pbody">
+        <div class="sg">
+          <div class="sbox ind"><div class="sico">🎫</div><div class="slbl">Open Tickets</div><div class="snum" id="st-op">3</div><div class="sdelta">↑ 1 since yesterday</div></div>
+          <div class="sbox gn"><div class="sico">✅</div><div class="slbl">Resolved</div><div class="snum">12</div><div class="sdelta">↑ 3 this week</div></div>
+          <div class="sbox am"><div class="sico">⏱️</div><div class="slbl">Avg. Response</div><div class="snum">2.4h</div><div class="sdelta">↓ 0.3h better</div></div>
+          <div class="sbox tl"><div class="sico">💬</div><div class="slbl">AI Chats Today</div><div class="snum">7</div><div class="sdelta">↑ 2 today</div></div>
+        </div>
+        <div class="dgrid">
+          <div class="card">
+            <div class="ch"><div class="cht">Recent Tickets</div><a class="chl" onclick="nav(document.querySelector('[data-pg=tickets]'))">View all →</a></div>
+            <div class="tr"><div class="tid">#1042</div><div class="ti"><div class="tt">Cannot access student portal login</div><div class="tm">IT Support · 2h ago</div></div><span class="badge b-ur">Urgent</span></div>
+            <div class="tr"><div class="tid">#1038</div><div class="ti"><div class="tt">Library book renewal not working</div><div class="tm">Library · 1d ago</div></div><span class="badge b-op">Open</span></div>
+            <div class="tr"><div class="tid">#1031</div><div class="ti"><div class="tt">Request for official transcript</div><div class="tm">Registrar · 3d ago</div></div><span class="badge b-pn">Pending</span></div>
+            <div class="tr"><div class="tid">#1020</div><div class="ti"><div class="tt">Cafeteria meal plan activation</div><div class="tm">Student Svcs · 5d ago</div></div><span class="badge b-rs">Resolved</span></div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="cht">Recent Activity</div></div>
+            <div class="ait"><div class="ad" style="background:var(--grn)"></div><div><div class="am2">Ticket #1020 marked resolved by support</div><div class="at">10 mins ago</div></div></div>
+            <div class="ait"><div class="ad" style="background:var(--amb)"></div><div><div class="am2">AI helped with portal access steps</div><div class="at">2h ago</div></div></div>
+            <div class="ait"><div class="ad" style="background:var(--acc)"></div><div><div class="am2">New reply on #1038 from library staff</div><div class="at">1d ago</div></div></div>
+            <div class="ait"><div class="ad" style="background:var(--em)"></div><div><div class="am2">Account settings updated successfully</div><div class="at">2d ago</div></div></div>
+            <div class="ait"><div class="ad" style="background:var(--grn)"></div><div><div class="am2">Ticket #1015 closed — Dorm WiFi fixed</div><div class="at">4d ago</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TICKETS -->
+    <div class="pg" id="pg-tickets">
+      <div class="pbody">
+        <div class="fbar">
+          <div class="chip on" onclick="fchip(this,'all')">All</div>
+          <div class="chip" onclick="fchip(this,'open')">Open</div>
+          <div class="chip" onclick="fchip(this,'pending')">Pending</div>
+          <div class="chip" onclick="fchip(this,'resolved')">Resolved</div>
+          <div class="chip" onclick="fchip(this,'urgent')">Urgent</div>
+        </div>
+        <div class="ntp" id="ntp">
+          <div class="ntp-t">📝 Submit New Ticket</div>
+          <div class="frow">
+            <div class="fg"><label class="fl">Department</label><select class="fsel" id="nt-d"><option>IT Support</option><option>Library Services</option><option>Registrar</option><option>Finance</option><option>Student Affairs</option><option>Facilities</option><option>Health Centre</option></select></div>
+            <div class="fg"><label class="fl">Priority</label><select class="fsel" id="nt-p"><option>Low</option><option selected>Medium</option><option>High</option><option>Urgent</option></select></div>
+          </div>
+          <div class="fg"><label class="fl">Subject</label><input class="fi" id="nt-s" placeholder="Brief description of your issue"></div>
+          <div class="fg"><label class="fl">Description</label><textarea class="fi" style="resize:vertical;min-height:75px" placeholder="Provide more details about your issue..."></textarea></div>
+          <div class="ntp-acts"><button class="btn btn-p" onclick="submitTicket()">Submit Ticket</button><button class="btn btn-g" onclick="closeNTP()">Cancel</button></div>
+        </div>
+        <table class="ttbl">
+          <thead><tr><th>ID</th><th>Subject</th><th>Department</th><th>Priority</th><th>Status</th><th>Updated</th><th></th></tr></thead>
+          <tbody id="tb">
+            <tr data-s="urgent"><td style="font-family:var(--mono);font-size:.72rem;color:var(--tx3)">#1042</td><td>Cannot access student portal login</td><td style="color:var(--tx2)">IT Support</td><td><span class="pd ph"></span>High</td><td><span class="badge b-ur">Urgent</span></td><td style="color:var(--tx3);font-size:.78rem">2h ago</td><td><button class="btn btn-g" style="font-size:.72rem;padding:.28rem .65rem" onclick="openModal()">View</button></td></tr>
+            <tr data-s="open"><td style="font-family:var(--mono);font-size:.72rem;color:var(--tx3)">#1038</td><td>Library book renewal not working</td><td style="color:var(--tx2)">Library</td><td><span class="pd pm"></span>Medium</td><td><span class="badge b-op">Open</span></td><td style="color:var(--tx3);font-size:.78rem">1d ago</td><td><button class="btn btn-g" style="font-size:.72rem;padding:.28rem .65rem" onclick="openModal()">View</button></td></tr>
+            <tr data-s="pending"><td style="font-family:var(--mono);font-size:.72rem;color:var(--tx3)">#1031</td><td>Request for official transcript copy</td><td style="color:var(--tx2)">Registrar</td><td><span class="pd pl"></span>Low</td><td><span class="badge b-pn">Pending</span></td><td style="color:var(--tx3);font-size:.78rem">3d ago</td><td><button class="btn btn-g" style="font-size:.72rem;padding:.28rem .65rem" onclick="openModal()">View</button></td></tr>
+            <tr data-s="resolved"><td style="font-family:var(--mono);font-size:.72rem;color:var(--tx3)">#1020</td><td>Cafeteria meal plan activation issue</td><td style="color:var(--tx2)">Student Svcs</td><td><span class="pd pl"></span>Low</td><td><span class="badge b-rs">Resolved</span></td><td style="color:var(--tx3);font-size:.78rem">5d ago</td><td><button class="btn btn-g" style="font-size:.72rem;padding:.28rem .65rem" onclick="openModal()">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div class="pg" id="pg-chat">
+      <div class="csp">
+        <div class="csp-h"><input class="csrch" placeholder="🔍  Search conversations..."></div>
+        <div class="clist">
+          <div class="ci on"><div class="ciav" style="background:linear-gradient(135deg,var(--acc),var(--teal))">🤖</div><div style="flex:1;min-width:0"><div class="cin">SageCampus AI</div><div class="cip">How can I help you today?</div></div><div class="cit">Now</div><div class="ciu">1</div></div>
+          <div class="ci"><div class="ciav" style="background:#1a2040">👩‍💼</div><div style="flex:1;min-width:0"><div class="cin">IT Support Team</div><div class="cip">Your ticket is being reviewed</div></div><div class="cit">2h</div></div>
+          <div class="ci"><div class="ciav" style="background:#0d1e14">📚</div><div style="flex:1;min-width:0"><div class="cin">Library Services</div><div class="cip">Renewal was processed</div></div><div class="cit">1d</div></div>
+          <div class="ci"><div class="ciav" style="background:#1e1530">🎓</div><div style="flex:1;min-width:0"><div class="cin">Registrar Office</div><div class="cip">Request under review</div></div><div class="cit">3d</div></div>
+        </div>
+      </div>
+      <div class="cma">
+        <div class="ctbar">
+          <div class="ciav" style="width:37px;height:37px;background:linear-gradient(135deg,var(--acc),var(--teal))">🤖</div>
+          <div><div style="font-size:.88rem;font-weight:600">SageCampus AI Assistant</div><div style="font-size:.7rem;color:var(--tx3)">Powered by Claude · Always available</div></div>
+          <div class="aipill"><div class="aipulse"></div>AI Online</div>
+        </div>
+        <div class="msgs" id="msgs">
+          <div class="msg b">
+            <div class="mav b">🤖</div>
+            <div><div class="mbub">👋 Hello! I'm the <strong>SageCampus AI Assistant</strong>.<br><br>I can help you with portal access, course registration, library services, IT issues, fees, scholarships, housing, and more.<br><br>What can I help you with today?</div><div class="mts">Just now</div></div>
+          </div>
+        </div>
+        <div class="ciw">
+          <div class="qcs">
+            <span class="qc" onclick="qs('How do I reset my student portal password?')">🔑 Reset password</span>
+            <span class="qc" onclick="qs('How do I register for courses?')">📋 Course registration</span>
+            <span class="qc" onclick="qs('What are the library opening hours?')">📚 Library hours</span>
+            <span class="qc" onclick="qs('How do I apply for a scholarship?')">🎓 Scholarships</span>
+            <span class="qc" onclick="qs('How do I pay my tuition fees online?')">💰 Fee payment</span>
+          </div>
+          <div class="cirow">
+            <textarea class="cta" id="cta" placeholder="Ask anything about campus services..." rows="1" onkeydown="ck(event)"></textarea>
+            <button class="sbtn" id="sbtn" onclick="sendMsg()">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KNOWLEDGE BASE -->
+    <div class="pg" id="pg-knowledge">
+      <div class="pbody">
+        <div class="kbsb"><span class="kbsi">🔍</span><input placeholder="Search articles, guides, FAQs..."></div>
+        <div class="kbgrid">
+          <div class="kbc"><div class="kbe">💻</div><div class="kbt">IT & Technology</div><div class="kbd">WiFi setup, portal access, software, VPN, and account recovery guides.</div><div class="kbcnt">24 articles</div></div>
+          <div class="kbc"><div class="kbe">📖</div><div class="kbt">Academic Services</div><div class="kbd">Course registration, exam schedules, grades, transcripts, and appeals.</div><div class="kbcnt">31 articles</div></div>
+          <div class="kbc"><div class="kbe">📚</div><div class="kbt">Library Services</div><div class="kbd">Book loans, renewals, study rooms, databases, and digital resources.</div><div class="kbcnt">18 articles</div></div>
+          <div class="kbc"><div class="kbe">💰</div><div class="kbt">Finance & Fees</div><div class="kbd">Tuition payment, scholarships, financial aid, refunds, and billing.</div><div class="kbcnt">22 articles</div></div>
+          <div class="kbc"><div class="kbe">🏠</div><div class="kbt">Housing & Campus</div><div class="kbd">Dorm assignments, facilities, parking, maps, and maintenance requests.</div><div class="kbcnt">15 articles</div></div>
+          <div class="kbc"><div class="kbe">❤️</div><div class="kbt">Student Wellness</div><div class="kbd">Health centre, counselling, mental health, sports, and clubs.</div><div class="kbcnt">19 articles</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS -->
+    <div class="pg" id="pg-announcements">
+      <div class="pbody">
+        <div class="annl">
+          <div class="annc" style="border-left:3px solid var(--red);border-radius:0 var(--r) var(--r) 0"><div class="annh"><div class="annt">⚠️ Planned Network Maintenance — Saturday Night</div><span class="badge b-ur">Urgent</span></div><div class="annb">Campus network maintenance Saturday April 19, 2:00 AM – 6:00 AM. Student portal, library databases, and email may be temporarily unavailable. Save your work beforehand.</div><div class="annf">📌 IT Department · April 17, 2026</div></div>
+          <div class="annc" style="border-left:3px solid var(--acc);border-radius:0 var(--r) var(--r) 0"><div class="annh"><div class="annt">📋 Fall 2026 Course Registration Opens Monday</div><span class="badge b-op">Info</span></div><div class="annb">Registration opens Monday April 21 at 8:00 AM. Priority given to final-year students. Ensure your advisor has cleared you before registering via the student portal.</div><div class="annf">📌 Registrar Office · April 16, 2026</div></div>
+          <div class="annc" style="border-left:3px solid var(--grn);border-radius:0 var(--r) var(--r) 0"><div class="annh"><div class="annt">🎓 Excellence Scholarship — Applications Now Open</div><span class="badge b-rs">Opportunity</span></div><div class="annb">The SageCampus Excellence Scholarship (₦500,000) is open for continuing students with CGPA ≥ 3.5. Deadline: May 15, 2026. Apply via Student Portal → Financial Aid → Scholarships.</div><div class="annf">📌 Financial Aid Office · April 14, 2026</div></div>
+          <div class="annc" style="border-left:3px solid var(--amb);border-radius:0 var(--r) var(--r) 0"><div class="annh"><div class="annt">🏋️ Sports Complex Reopens April 20 — New Equipment</div><span class="badge b-pn">Update</span></div><div class="annb">The Sports Complex reopens April 20 with brand new gym equipment. Student ID required for entry. Hours: Mon–Sat 6 AM–10 PM, Sun 8 AM–6 PM.</div><div class="annf">📌 Student Affairs · April 12, 2026</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="pg" id="pg-profile">
+      <div class="pbody">
+        <div class="pgl">
+          <div>
+            <div class="pc">
+              <div class="pav" id="pav">?</div>
+              <div class="pn" id="pnm">Loading...</div>
+              <div class="pr" id="prl">—</div>
+              <div class="psg">
+                <div class="ps"><div class="psv">15</div><div class="psl">Tickets</div></div>
+                <div class="ps"><div class="psv">12</div><div class="psl">Resolved</div></div>
+                <div class="ps"><div class="psv">7</div><div class="psl">AI Chats</div></div>
+              </div>
+              <button class="btn-o" onclick="toast('Photo upload coming soon!')">📷 Change Photo</button>
+              <div style="border-top:1px solid var(--bdr);margin:.92rem 0"></div>
+              <div style="text-align:left">
+                <div style="font-size:.67rem;color:var(--tx3);margin-bottom:.3rem">Student ID</div>
+                <div style="font-family:var(--mono);font-size:.82rem;color:var(--tx2)" id="p-sid">—</div>
+                <div style="font-size:.67rem;color:var(--tx3);margin-top:.7rem;margin-bottom:.3rem">Email</div>
+                <div style="font-size:.8rem;color:var(--tx2)" id="p-em">—</div>
+                <div style="font-size:.67rem;color:var(--tx3);margin-top:.7rem;margin-bottom:.3rem">Member Since</div>
+                <div style="font-size:.8rem;color:var(--tx2)" id="p-join">—</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="sc">
+              <div class="sct">Personal Information</div>
+              <div class="frow">
+                <div class="fg"><label class="fl">First Name</label><input class="fi" id="pf-fn" value=""></div>
+                <div class="fg"><label class="fl">Last Name</label><input class="fi" id="pf-ln" value=""></div>
+              </div>
+              <div class="fg"><label class="fl">Email</label><input class="fi" id="pf-em" value=""></div>
+              <div class="frow">
+                <div class="fg"><label class="fl">Role</label><input class="fi" id="pf-rl" value="" readonly style="opacity:.65"></div>
+                <div class="fg"><label class="fl">Department</label><input class="fi" id="pf-dp" value=""></div>
+              </div>
+              <button class="btn btn-p" style="margin-top:.5rem" onclick="saveProfile()">Save Changes</button>
+            </div>
+            <div class="sc">
+              <div class="sct">Notification Preferences</div>
+              <div class="sr"><div><div class="sl">Email Notifications</div><div class="ss">Receive ticket updates by email</div></div><div class="tgl on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="sr"><div><div class="sl">SMS Alerts</div><div class="ss">Get urgent alerts via SMS</div></div><div class="tgl on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="sr"><div><div class="sl">AI Chat Suggestions</div><div class="ss">Show quick-reply chips in chat</div></div><div class="tgl on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="sr"><div><div class="sl">Announcement Alerts</div><div class="ss">Get notified of campus news</div></div><div class="tgl" onclick="this.classList.toggle('on')"></div></div>
+            </div>
+            <div class="sc">
+              <div class="sct">Security</div>
+              <div class="sr"><div><div class="sl">Change Password</div><div class="ss">Update your account password</div></div><button class="btn btn-g" onclick="toast('Password reset email sent!')">Change</button></div>
+              <div class="sr"><div><div class="sl">Two-Factor Authentication</div><div class="ss">Extra layer of security</div></div><div class="tgl" onclick="this.classList.toggle('on')"></div></div>
+              <div class="sr"><div><div class="sl">Active Sessions</div><div class="ss">1 device logged in</div></div><button class="btn btn-g" style="color:var(--red);border-color:var(--red)" onclick="toast('Other sessions signed out')">Sign out all</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATABASE ADMIN -->
+    <div class="pg" id="pg-database">
+      <div class="pbody">
+        <div class="db-stats-row">
+          <div class="db-stat"><div class="db-stat-n" id="dbs-total">0</div><div class="db-stat-l">Total Users</div></div>
+          <div class="db-stat"><div class="db-stat-n" id="dbs-students" style="color:var(--em)">0</div><div class="db-stat-l">Students</div></div>
+          <div class="db-stat"><div class="db-stat-n" id="dbs-staff" style="color:var(--teal)">0</div><div class="db-stat-l">Faculty & Staff</div></div>
+          <div class="db-stat"><div class="db-stat-n" id="dbs-admins" style="color:var(--red)">0</div><div class="db-stat-l">Admins</div></div>
+        </div>
+        <div class="db-panel">
+          <div class="db-panel-head">
+            <div class="db-panel-title">🗄️ Users Table <span class="live-badge">LIVE</span></div>
+            <span class="db-count" id="db-ucount">0 records</span>
+          </div>
+          <table class="db-tbl">
+            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Joined</th><th>Action</th></tr></thead>
+            <tbody id="db-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /mcontent -->
+</div><!-- /scr-app -->
+
+<!-- TICKET DETAIL MODAL -->
+<div class="moverlay" id="mdl" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="mt">Ticket #1042 — IT Support <button class="mc" onclick="closeModal()">✕</button></div>
+    <div style="display:flex;gap:.65rem;margin-bottom:1rem"><span class="badge b-ur">Urgent</span><span class="badge b-op">Open</span><span style="font-size:.74rem;color:var(--tx3);margin-left:auto">2 hours ago</span></div>
+    <div style="font-size:.92rem;font-weight:600;margin-bottom:.45rem">Cannot access student portal login</div>
+    <div style="font-size:.82rem;color:var(--tx2);line-height:1.7;margin-bottom:1rem">I've been trying to log in since this morning but keep getting an "Invalid credentials" error. I tried resetting my password but the reset email isn't arriving. This is urgent — I have an assignment due at midnight.</div>
+    <div style="background:var(--surf2);border-radius:var(--r);padding:.9rem;margin-bottom:1rem">
+      <div style="font-size:.67rem;color:var(--tx3);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.07em">Support Reply</div>
+      <div style="font-size:.82rem;color:var(--tx2);line-height:1.7">Hi, our team is aware of this issue. As a workaround, try clearing your browser cache or using an incognito window. We'll resolve this within the hour. — IT Support Team</div>
+    </div>
+    <div class="fg"><label class="fl">Add Reply</label><textarea class="fi" style="resize:vertical;min-height:65px" placeholder="Type your reply..."></textarea></div>
+    <div style="display:flex;gap:.65rem;margin-top:.75rem">
+      <button class="btn btn-p" onclick="closeModal();toast('Reply sent! ✅')">Send Reply</button>
+      <button class="btn btn-g" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="tst"><span id="tst-m">Done!</span></div>
+
+<script>
+// ══════════════════════════════════════════════════
+//  DATABASE  (localStorage-backed user store)
+// ══════════════════════════════════════════════════
+const DB = {
+  KEY: 'sc_users',
+  init() {
+    if (!localStorage.getItem(this.KEY)) {
+      const seed = [{
+        id: 'SC-001', firstName: 'Admin', lastName: 'User',
+        email: 'admin@sagecampus.edu', password: this.hash('admin123'),
+        role: 'Admin', department: 'Administration',
+        joined: new Date('2024-01-01').toISOString()
+      }];
+      localStorage.setItem(this.KEY, JSON.stringify(seed));
+    }
+  },
+  hash(pw) {
+    let h = 0;
+    for (let c of pw) h = (Math.imul(31, h) + c.charCodeAt(0)) | 0;
+    return (h >>> 0).toString(36) + '_sc';
+  },
+  getAll() { return JSON.parse(localStorage.getItem(this.KEY) || '[]'); },
+  save(users) { localStorage.setItem(this.KEY, JSON.stringify(users)); },
+  find(email) { return this.getAll().find(u => u.email.toLowerCase() === email.toLowerCase()); },
+  add(u) {
+    const users = this.getAll();
+    u.id = 'SC-' + String(users.length + 1).padStart(3, '0');
+    users.push(u);
+    this.save(users);
+    return u;
+  },
+  delete(id) { this.save(this.getAll().filter(u => u.id !== id)); },
+  update(id, data) {
+    const users = this.getAll();
+    const i = users.findIndex(u => u.id === id);
+    if (i > -1) { users[i] = { ...users[i], ...data }; this.save(users); }
+  }
+};
+DB.init();
+
+// ══════════════════════════════════════════════════
+//  STATE & CONSTANTS
+// ══════════════════════════════════════════════════
+let currentUser = null;
+let hist = [], busy = false, tc = 1043;
+const API = 'https://api.anthropic.com/v1/messages';
+
+const pgMeta = {
+  dashboard:     { t: 'Dashboard',         s: '',                                       a: `<button class="btn btn-p" onclick="nav(document.querySelector('[data-pg=tickets]'));openNTP()">+ New Ticket</button>` },
+  tickets:       { t: 'My Tickets',        s: 'Track and manage your support requests', a: `<button class="btn btn-p" onclick="openNTP()">+ New Ticket</button>` },
+  chat:          { t: 'AI Support Chat',   s: 'Powered by Claude · Instant answers',    a: '' },
+  knowledge:     { t: 'Knowledge Base',    s: 'Find guides and FAQs instantly',         a: '' },
+  announcements: { t: 'Announcements',     s: 'Stay up to date with campus news',       a: '' },
+  profile:       { t: 'Profile & Settings',s: 'Manage your account',                   a: `<button class="btn btn-p" onclick="saveProfile()">Save Changes</button>` },
+  database:      { t: 'User Database',     s: 'Live user registry · Admin only',        a: `<button class="btn btn-p" onclick="renderDB()">↻ Refresh</button>` }
+};
+
+// ══════════════════════════════════════════════════
+//  SCREEN NAV
+// ══════════════════════════════════════════════════
+function goscr(id) {
+  document.querySelectorAll('.scr').forEach(s => s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+
+// ══════════════════════════════════════════════════
+//  FORM VALIDATION HELPERS
+// ══════════════════════════════════════════════════
+function showErr(id, msg, show) {
+  const errEl = document.getElementById(id + '-err');
+  const inpEl = document.getElementById(id);
+  if (errEl) { if (msg) errEl.textContent = msg; errEl.classList.toggle('on', show); }
+  if (inpEl) inpEl.classList.toggle('field-err', show);
+}
+function clearErrs(...ids) { ids.forEach(id => showErr(id, '', false)); }
+
+function pwStrength(pw) {
+  const fill = document.getElementById('sfill'); if (!fill) return;
+  let score = 0;
+  if (pw.length >= 6) score++;
+  if (pw.length >= 10) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const pct   = [0, 20, 40, 65, 85, 100][Math.min(score, 5)];
+  const color = ['', '#ef4444', '#f59e0b', '#f59e0b', '#10b981', '#10b981'][Math.min(score, 5)];
+  fill.style.width = pct + '%';
+  fill.style.background = color;
+}
+
+// ══════════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════════
+function doLogin() {
+  const em = document.getElementById('le').value.trim();
+  const pw = document.getElementById('lp').value;
+  clearErrs('le', 'lp');
+  let ok = true;
+  if (!em || !/\S+@\S+\.\S+/.test(em)) { showErr('le', 'Please enter a valid email address', true); ok = false; }
+  if (!pw) { showErr('lp', 'Password is required', true); ok = false; }
+  if (!ok) return;
+  const user = DB.find(em);
+  if (!user || user.password !== DB.hash(pw)) {
+    showErr('le', 'Email or password is incorrect', true);
+    showErr('lp', '', true);
+    return;
+  }
+  currentUser = user;
+  loadUserUI();
+  toast('Welcome back, ' + user.firstName + '! 🎓');
+  setTimeout(() => goscr('scr-app'), 700);
+}
+
+function doSignup() {
+  const fn = document.getElementById('sfn').value.trim();
+  const ln = document.getElementById('sln').value.trim();
+  const em = document.getElementById('sem').value.trim();
+  const pw = document.getElementById('spw').value;
+  const rl = document.getElementById('srl').value;
+  const dp = document.getElementById('sdept').value;
+  clearErrs('sfn', 'sln', 'sem', 'spw');
+  let ok = true;
+  if (!fn) { showErr('sfn', 'Required', true); ok = false; }
+  if (!ln) { showErr('sln', 'Required', true); ok = false; }
+  if (!em || !/\S+@\S+\.\S+/.test(em)) { showErr('sem', 'Enter a valid email address', true); ok = false; }
+  if (pw.length < 6) { showErr('spw', 'Password must be at least 6 characters', true); ok = false; }
+  if (!ok) return;
+  if (DB.find(em)) { showErr('sem', 'An account with this email already exists', true); return; }
+  const user = DB.add({ firstName: fn, lastName: ln, email: em, password: DB.hash(pw), role: rl, department: dp, joined: new Date().toISOString() });
+  currentUser = user;
+  loadUserUI();
+  toast('Account created! Welcome, ' + fn + ' 🎓');
+  setTimeout(() => goscr('scr-app'), 750);
+}
+
+function doLogout() {
+  currentUser = null;
+  hist = [];
+  goscr('scr-login');
+  toast('Signed out successfully');
+}
+
+// ══════════════════════════════════════════════════
+//  LOAD USER INTO UI
+// ══════════════════════════════════════════════════
+function loadUserUI() {
+  if (!currentUser) return;
+  const u = currentUser;
+  const ini = (u.firstName[0] + u.lastName[0]).toUpperCase();
+  const nm  = u.firstName + ' ' + u.lastName;
+  document.getElementById('sb-av').textContent  = ini;
+  document.getElementById('sb-nm').textContent  = nm;
+  document.getElementById('sb-rl').textContent  = u.role + ' · ' + u.department;
+  document.getElementById('pav').textContent    = ini;
+  document.getElementById('pnm').textContent    = nm;
+  document.getElementById('prl').textContent    = u.role + ' · ' + u.department;
+  document.getElementById('p-sid').textContent  = u.id;
+  document.getElementById('p-em').textContent   = u.email;
+  document.getElementById('p-join').textContent = new Date(u.joined).toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
+  document.getElementById('pf-fn').value = u.firstName;
+  document.getElementById('pf-ln').value = u.lastName;
+  document.getElementById('pf-em').value = u.email;
+  document.getElementById('pf-rl').value = u.role;
+  document.getElementById('pf-dp').value = u.department;
+  document.getElementById('tb-s').textContent = 'Good day, ' + u.firstName + ' 👋';
+  document.getElementById('db-nav').style.display = u.role === 'Admin' ? 'flex' : 'none';
+}
+
+function saveProfile() {
+  if (!currentUser) return;
+  const fn = document.getElementById('pf-fn').value.trim();
+  const ln = document.getElementById('pf-ln').value.trim();
+  const dp = document.getElementById('pf-dp').value.trim();
+  if (!fn || !ln) { toast('Name fields cannot be empty', 1); return; }
+  DB.update(currentUser.id, { firstName: fn, lastName: ln, department: dp });
+  currentUser = { ...currentUser, firstName: fn, lastName: ln, department: dp };
+  loadUserUI();
+  toast('Profile saved! ✅');
+}
+
+// ══════════════════════════════════════════════════
+//  PAGE NAVIGATION
+// ══════════════════════════════════════════════════
+function nav(el) {
+  document.querySelectorAll('.nl').forEach(n => n.classList.remove('on'));
+  el.classList.add('on');
+  const pg = el.dataset.pg;
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  document.getElementById('pg-' + pg).classList.add('on');
+  const m = pgMeta[pg] || {};
+  document.getElementById('tb-t').textContent = m.t || '';
+  document.getElementById('tb-a').innerHTML   = m.a || '';
+  if (pg !== 'dashboard') document.getElementById('tb-s').textContent = m.s || '';
+  else if (currentUser)   document.getElementById('tb-s').textContent = 'Good day, ' + currentUser.firstName + ' 👋';
+  if (pg === 'database') renderDB();
+}
+
+// ══════════════════════════════════════════════════
+//  DATABASE ADMIN
+// ══════════════════════════════════════════════════
+function renderDB() {
+  const users = DB.getAll();
+  const tbody = document.getElementById('db-tbody');
+  tbody.innerHTML = '';
+  const rpMap = { Student: 'rp-student', Faculty: 'rp-faculty', Staff: 'rp-staff', Admin: 'rp-admin' };
+  const adminCount = users.filter(u => u.role === 'Admin').length;
+  users.forEach(u => {
+    const rp = rpMap[u.role] || 'rp-student';
+    const isLastAdmin = u.role === 'Admin' && adminCount <= 1;
+    const isSelf = u.id === currentUser?.id;
+    const canDelete = !isLastAdmin && !isSelf;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-family:var(--mono);font-size:.7rem;color:var(--tx3)">${u.id}</td>
+      <td style="font-weight:500">${u.firstName} ${u.lastName}</td>
+      <td style="color:var(--tx2);font-size:.79rem">${u.email}</td>
+      <td><span class="role-pill ${rp}">${u.role}</span></td>
+      <td style="color:var(--tx2);font-size:.79rem">${u.department}</td>
+      <td style="color:var(--tx3);font-size:.76rem">${new Date(u.joined).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</td>
+      <td><button class="db-del" onclick="delUser('${u.id}')" ${canDelete ? '' : 'disabled'} title="${!canDelete ? (isSelf ? 'Cannot remove yourself' : 'Last admin') : 'Remove user'}">Remove</button></td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('db-ucount').textContent   = users.length + ' records';
+  document.getElementById('dbs-total').textContent   = users.length;
+  document.getElementById('dbs-students').textContent = users.filter(u => u.role === 'Student').length;
+  document.getElementById('dbs-staff').textContent   = users.filter(u => u.role === 'Faculty' || u.role === 'Staff').length;
+  document.getElementById('dbs-admins').textContent  = users.filter(u => u.role === 'Admin').length;
+}
+
+function delUser(id) {
+  if (id === currentUser?.id) { toast('Cannot delete your own account', 1); return; }
+  DB.delete(id);
+  renderDB();
+  toast('User removed from database');
+}
+
+// ══════════════════════════════════════════════════
+//  TICKETS
+// ══════════════════════════════════════════════════
+function openNTP() {
+  const p = document.getElementById('ntp');
+  p.classList.add('op');
+  p.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function closeNTP() { document.getElementById('ntp').classList.remove('op'); }
+
+function submitTicket() {
+  const s = document.getElementById('nt-s').value.trim();
+  const d = document.getElementById('nt-d').value;
+  const p = document.getElementById('nt-p').value;
+  if (!s) { toast('Please enter a subject for your ticket', 1); return; }
+  const id = '#' + tc++;
+  const pc = { High: 'ph', Urgent: 'ph', Medium: 'pm', Low: 'pl' }[p] || 'pl';
+  const row = document.createElement('tr');
+  row.dataset.s = 'open';
+  row.innerHTML = `<td style="font-family:var(--mono);font-size:.72rem;color:var(--tx3)">${id}</td><td>${s}</td><td style="color:var(--tx2)">${d}</td><td><span class="pd ${pc}"></span>${p}</td><td><span class="badge b-op">Open</span></td><td style="color:var(--tx3);font-size:.78rem">Just now</td><td><button class="btn btn-g" style="font-size:.72rem;padding:.28rem .65rem" onclick="openModal()">View</button></td>`;
+  document.getElementById('tb').prepend(row);
+  const nb = document.getElementById('nbt');
+  nb.textContent = parseInt(nb.textContent) + 1;
+  document.getElementById('st-op').textContent = nb.textContent;
+  closeNTP();
+  document.getElementById('nt-s').value = '';
+  toast('Ticket ' + id + ' submitted successfully! ✅');
+}
+
+function fchip(el, s) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('#tb tr').forEach(r => { r.style.display = (s === 'all' || r.dataset.s === s) ? '' : 'none'; });
+}
+
+function openModal()  { document.getElementById('mdl').classList.add('on'); }
+function closeModal() { document.getElementById('mdl').classList.remove('on'); }
+
+// ══════════════════════════════════════════════════
+//  AI CHAT
+// ══════════════════════════════════════════════════
+function ck(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } }
+function qs(t) { document.getElementById('cta').value = t; sendMsg(); }
+
+async function sendMsg() {
+  const ta  = document.getElementById('cta');
+  const txt = ta.value.trim();
+  if (!txt || busy) return;
+  ta.value = ''; busy = true;
+  document.getElementById('sbtn').disabled = true;
+  addMsg('u', txt);
+  hist.push({ role: 'user', content: txt });
+  const ty = addTyping();
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are the SageCampus University AI Helpdesk Assistant — friendly, professional, and knowledgeable about campus life. Help students, faculty, and staff with:
+- IT support: portal access, WiFi, student email, software, VPN
+- Academics: course registration, grades, transcripts, exams, graduation
+- Library: book borrowing, renewals, study rooms, digital resources, databases
+- Finance: tuition fees, payment portals, scholarships, financial aid, refunds
+- Housing: dorm assignments, maintenance requests, campus maps, parking
+- Student affairs: health centre, counselling, clubs, events, wellness
+
+Be warm but concise. Use occasional relevant emojis. If you cannot resolve something directly, advise the user to submit a support ticket or contact the specific department. Keep responses under 200 words unless a detailed explanation is truly necessary.`,
+        messages: hist
+      })
+    });
+    ty.remove();
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      addMsg('b', '⚠️ ' + (err?.error?.message || 'API error. Please try again.'));
+    } else {
+      const data  = await res.json();
+      const reply = data.content?.map(b => b.type === 'text' ? b.text : '').join('') || 'Sorry, no response generated.';
+      addMsg('b', reply);
+      hist.push({ role: 'assistant', content: reply });
+    }
+  } catch (e) {
+    ty.remove();
+    addMsg('b', '⚠️ Unable to reach the AI service. Please try again in a moment.');
+  }
+  busy = false;
+  document.getElementById('sbtn').disabled = false;
+}
+
+function addMsg(role, txt) {
+  const w   = document.getElementById('msgs');
+  const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const d   = document.createElement('div');
+  d.className = 'msg ' + (role === 'b' ? 'b' : 'u');
+  const safe = txt.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  const avTxt = currentUser ? (currentUser.firstName[0] + currentUser.lastName[0]).toUpperCase() : 'U';
+  d.innerHTML = role === 'b'
+    ? `<div class="mav b">🤖</div><div><div class="mbub">${safe}</div><div class="mts">${now}</div></div>`
+    : `<div class="mav u2">${avTxt}</div><div><div class="mbub">${safe}</div><div class="mts">${now}</div></div>`;
+  w.appendChild(d);
+  w.scrollTop = w.scrollHeight;
+  return d;
+}
+
+function addTyping() {
+  const w = document.getElementById('msgs');
+  const d = document.createElement('div');
+  d.className = 'msg b';
+  d.innerHTML = `<div class="mav b">🤖</div><div><div class="mbub" style="padding:.48rem .78rem"><div class="tybub"><div class="tyd"></div><div class="tyd"></div><div class="tyd"></div></div></div></div>`;
+  w.appendChild(d);
+  w.scrollTop = w.scrollHeight;
+  return d;
+}
+
+// ══════════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════════
+function toast(msg, err = 0) {
+  const t = document.getElementById('tst');
+  t.className = 'toast' + (err ? ' err' : '');
+  t.innerHTML = (err ? '⚠️ ' : '✅ ') + `<span>${msg}</span>`;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 3200);
+}
+</script>
+</body>
+</html>
